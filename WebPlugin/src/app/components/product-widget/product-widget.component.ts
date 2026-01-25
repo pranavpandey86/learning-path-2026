@@ -4,47 +4,81 @@ import { Product } from '../../models/product.model';
 import { ProductService } from '../../services/product.service';
 import { ProductGridComponent } from '../product-grid/product-grid.component';
 import { PaginationComponent } from '../pagination/pagination.component';
+import { SidebarComponent } from '../sidebar/sidebar.component';
 
 @Component({
-    selector: 'app-product-widget',
-    standalone: true,
-    imports: [CommonModule, ProductGridComponent, PaginationComponent],
-    template: `
-    <div class="product-widget">
-      <header class="widget-header">
-        <h2 class="widget-title">
-          <span class="title-icon">🛒</span>
-          Tech Accessories
-        </h2>
-        <p class="widget-subtitle">Discover our premium selection of desktop and tech accessories</p>
-      </header>
+  selector: 'app-product-widget',
+  standalone: true,
+  imports: [CommonModule, ProductGridComponent, PaginationComponent, SidebarComponent],
+  template: `
+    <div class="app-layout">
+      <app-sidebar></app-sidebar>
       
-      <div class="widget-content" *ngIf="!loading; else loadingTemplate">
-        <app-product-grid [products]="currentProducts"></app-product-grid>
-        
-        <app-pagination 
-          [currentPage]="currentPage" 
-          [totalPages]="totalPages"
-          (pageChange)="onPageChange($event)">
-        </app-pagination>
-      </div>
-      
-      <ng-template #loadingTemplate>
-        <div class="loading-container">
-          <div class="loading-spinner"></div>
-          <p>Loading products...</p>
+      <main class="main-content">
+        <div class="product-widget">
+          <header class="widget-header">
+            <h2 class="widget-title">
+              <span class="title-icon">🛒</span>
+              Tech Accessories
+            </h2>
+            <p class="widget-subtitle">Discover our premium selection of desktop and tech accessories</p>
+          </header>
+          
+          <div class="widget-content" *ngIf="!loading; else loadingTemplate">
+            <app-product-grid [products]="currentProducts"></app-product-grid>
+            
+            <app-pagination 
+              [currentPage]="currentPage" 
+              [totalPages]="totalPages"
+              (pageChange)="onPageChange($event)">
+            </app-pagination>
+          </div>
+          
+          <ng-template #loadingTemplate>
+            <div class="loading-container">
+              <div class="loading-spinner"></div>
+              <p>Loading products...</p>
+            </div>
+          </ng-template>
         </div>
-      </ng-template>
+      </main>
     </div>
   `,
-    styles: [`
-    .product-widget {
+  styles: [`
+    :host {
+      display: block;
+      min-height: 100vh;
+    }
+
+    .app-layout {
+      display: flex;
+      min-height: 100vh;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      max-width: 1400px;
+    }
+
+    :host ::ng-deep app-sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      flex-shrink: 0;
+    }
+
+    :host ::ng-deep app-sidebar .sidebar {
+      height: 100%;
+      min-height: 100vh;
+    }
+
+    .main-content {
+      flex: 1;
+      min-height: 100vh;
+      overflow-y: auto;
+      background: linear-gradient(180deg, #f8f9ff 0%, #ffffff 100%);
+    }
+
+    .product-widget {
+      max-width: 1200px;
       margin: 0 auto;
       padding: 32px;
-      background: linear-gradient(180deg, #f8f9ff 0%, #ffffff 100%);
-      min-height: 100vh;
     }
     
     .widget-header {
@@ -104,63 +138,76 @@ import { PaginationComponent } from '../pagination/pagination.component';
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+
+    /* Responsive: hide sidebar on mobile */
+    @media (max-width: 768px) {
+      .app-layout {
+        flex-direction: column;
+      }
+      
+      :host ::ng-deep .sidebar {
+        width: 100%;
+        min-width: 100%;
+        max-height: 300px;
+      }
+    }
   `]
 })
 export class ProductWidgetComponent implements OnInit, OnChanges {
-    @Input() apiBaseUrl: string = '';
-    @Input() itemsPerPage: number = 8;
+  @Input() apiBaseUrl: string = '';
+  @Input() itemsPerPage: number = 8;
 
-    products: Product[] = [];
-    currentProducts: Product[] = [];
-    currentPage: number = 1;
-    totalPages: number = 1;
-    loading: boolean = true;
+  products: Product[] = [];
+  currentProducts: Product[] = [];
+  currentPage: number = 1;
+  totalPages: number = 1;
+  loading: boolean = true;
 
-    constructor(private productService: ProductService) { }
+  constructor(private productService: ProductService) { }
 
-    ngOnInit(): void {
-        this.loadProducts();
+  ngOnInit(): void {
+    this.loadProducts();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['apiBaseUrl'] && this.apiBaseUrl) {
+      this.productService.setApiBaseUrl(this.apiBaseUrl);
     }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes['apiBaseUrl'] && this.apiBaseUrl) {
-            this.productService.setApiBaseUrl(this.apiBaseUrl);
-        }
-        if (changes['itemsPerPage']) {
-            this.updatePagination();
-        }
+    if (changes['itemsPerPage']) {
+      this.updatePagination();
     }
+  }
 
-    loadProducts(): void {
-        this.loading = true;
-        this.productService.getProducts().subscribe({
-            next: (products) => {
-                this.products = products;
-                this.updatePagination();
-                this.loading = false;
-            },
-            error: (error) => {
-                console.error('Error loading products:', error);
-                this.loading = false;
-            }
-        });
-    }
+  loadProducts(): void {
+    this.loading = true;
+    this.productService.getProducts().subscribe({
+      next: (products) => {
+        this.products = products;
+        this.updatePagination();
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading products:', error);
+        this.loading = false;
+      }
+    });
+  }
 
-    updatePagination(): void {
-        this.totalPages = Math.ceil(this.products.length / this.itemsPerPage);
-        this.updateCurrentProducts();
-    }
+  updatePagination(): void {
+    this.totalPages = Math.ceil(this.products.length / this.itemsPerPage);
+    this.updateCurrentProducts();
+  }
 
-    updateCurrentProducts(): void {
-        const start = (this.currentPage - 1) * this.itemsPerPage;
-        const end = start + this.itemsPerPage;
-        this.currentProducts = this.products.slice(start, end);
-    }
+  updateCurrentProducts(): void {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    this.currentProducts = this.products.slice(start, end);
+  }
 
-    onPageChange(page: number): void {
-        this.currentPage = page;
-        this.updateCurrentProducts();
-        // Scroll to top of widget
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.updateCurrentProducts();
+    // Scroll to top of widget
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 }

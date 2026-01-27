@@ -1,242 +1,286 @@
-# Product Widget - Integration Guide for AI Agents
+# Product Widget - Complete Integration Guide
 
-> **For Claude/Copilot**: This document contains step-by-step instructions to integrate the Product Widget into a main application. Follow each step exactly as written.
+> **FOR AI AGENTS**: This is the ONLY document you need. Follow each step exactly as written. Minimal changes to the host application are required.
+
+---
+
+## What is This Widget?
+
+The Product Widget is a self-contained Angular Web Component that displays a product catalog with ordering capability. It is designed to be embedded in any Angular 15+ application.
+
+**Features:**
+- Product grid with horizontal tiles (Citi Marketplace style)
+- Delivery time indicators on each tile
+- Order form with Machine, Version, and Approver dropdowns
+- Page-based navigation (click product → shows order form page → back button)
+- Built WITHOUT zone.js (uses host app's zone.js to avoid conflicts)
+
+**Total Changes Required in Host App: 3 lines of code**
 
 ---
 
 ## Prerequisites
 
 - Node.js 18+ installed
-- The main company application (Angular, React, Vue, or plain HTML)
-- This WebPlugin repository cloned locally
+- Host Angular application is version 15+
+- Access to the WebPlugin source code
 
 ---
 
-## Step 1: Build the Widget Bundle
+## Step 1: Build the Widget
+
+Run these commands in the `WebPlugin` directory:
 
 ```bash
-# Navigate to the WebPlugin folder
-cd WebPlugin
+cd /path/to/WebPlugin
 
-# Install dependencies
 npm install
 
-# Build the standalone web component bundle
 npm run build:elements
 ```
 
-**Expected output**: A `dist/product-widget/` folder containing:
-- `product-widget.js` (main bundle ~150KB)
-- `styles.css` (optional, styles are embedded)
-- `assets/products/*.png` (16 product images)
-
----
-
-## Step 2: Copy Files to Your Main Application
-
-Copy the following files from `dist/product-widget/` to your main application's static/public folder:
-
+**Expected Output:**
 ```
-YOUR_MAIN_APP/
-├── public/               (or 'static/' or 'assets/')
-│   └── product-widget/
-│       ├── product-widget.js
-│       └── assets/
-│           └── products/
-│               ├── headphones.png
-│               ├── laptop.png
-│               ├── mouse.png
-│               ├── keyboard.png
-│               ├── monitor.png
-│               ├── webcam.png
-│               ├── speakers.png
-│               ├── controller.png
-│               ├── usb_hub.png
-│               ├── ssd.png
-│               ├── laptop_stand.png
-│               ├── desk_lamp.png
-│               ├── wireless_charger.png
-│               ├── earbuds.png
-│               ├── drawing_tablet.png
-│               └── microphone.png
+✨ Build complete!
+
+📦 Output files:
+   - dist/product-widget/product-widget.js
+   - dist/product-widget/assets/
 ```
 
 ---
 
-## Step 3: Add to Your HTML
+## Step 2: Copy Files to Host Application
 
-### Option A: Plain HTML Application
+### Create destination folder and copy files:
 
-Add these lines to your `index.html`:
+```bash
+# Create the widgets folder in your host app
+mkdir -p /path/to/your-app/src/assets/widgets
+
+# Copy the main JavaScript bundle
+cp /path/to/WebPlugin/dist/product-widget/product-widget.js /path/to/your-app/src/assets/widgets/
+
+# Copy the assets folder (contains product images)
+cp -r /path/to/WebPlugin/dist/product-widget/assets /path/to/your-app/src/assets/widgets/
+```
+
+### Verify the resulting structure:
+
+```
+your-app/
+└── src/
+    └── assets/
+        └── widgets/
+            ├── product-widget.js
+            └── assets/
+                └── products/
+                    ├── headphones_1769364775116.png
+                    ├── laptop_1769364788924.png
+                    ├── mouse_1769364802377.png
+                    └── ... (13 more images)
+```
+
+---
+
+## Step 3: Modify Host Application (3 CHANGES TOTAL)
+
+### Change 1: Add Script Tag to `src/index.html`
+
+Open `src/index.html` and add this line BEFORE the closing `</body>` tag:
 
 ```html
-<!DOCTYPE html>
-<html>
+<script src="assets/widgets/product-widget.js" defer></script>
+```
+
+**Full example of index.html:**
+```html
+<!doctype html>
+<html lang="en">
 <head>
-  <title>Your App</title>
-  <!-- Load the widget script -->
-  <script src="/product-widget/product-widget.js" defer></script>
+  <meta charset="utf-8">
+  <title>Your Application</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-  <!-- Place the widget where you want it to appear -->
-  <product-widget></product-widget>
+  <app-root></app-root>
+  <script src="assets/widgets/product-widget.js" defer></script>
 </body>
 </html>
 ```
 
-### Option B: Angular Application
+---
 
-1. Add script to `angular.json`:
-```json
-{
-  "projects": {
-    "your-app": {
-      "architect": {
-        "build": {
-          "options": {
-            "scripts": [
-              "src/assets/product-widget/product-widget.js"
-            ]
-          }
-        }
-      }
-    }
-  }
-}
-```
+### Change 2: Add CUSTOM_ELEMENTS_SCHEMA
 
-2. Add to `app.module.ts`:
+**For NgModule-based apps**, edit `src/app/app.module.ts`:
+
 ```typescript
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { AppComponent } from './app.component';
 
 @NgModule({
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  // ... rest of config
+  declarations: [AppComponent],
+  imports: [BrowserModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],  // <-- ADD THIS LINE
+  bootstrap: [AppComponent]
 })
 export class AppModule { }
 ```
 
-3. Use in any component template:
-```html
-<product-widget></product-widget>
-```
+**For Standalone apps**, add schema to the component:
 
-### Option C: React Application
+```typescript
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
-1. Add script tag to `public/index.html`:
-```html
-<script src="/product-widget/product-widget.js" defer></script>
-```
-
-2. Use in any React component:
-```jsx
-function App() {
-  return (
-    <div>
-      <product-widget></product-widget>
-    </div>
-  );
-}
-```
-
-### Option D: Vue Application
-
-1. Add script tag to `public/index.html`:
-```html
-<script src="/product-widget/product-widget.js" defer></script>
-```
-
-2. Configure Vue to ignore custom elements in `vite.config.js` or `vue.config.js`:
-```javascript
-// vite.config.js
-export default {
-  plugins: [
-    vue({
-      template: {
-        compilerOptions: {
-          isCustomElement: (tag) => tag === 'product-widget'
-        }
-      }
-    })
-  ]
-}
-```
-
-3. Use in any Vue component:
-```vue
-<template>
-  <product-widget></product-widget>
-</template>
+@Component({
+  selector: 'app-your-page',
+  standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],  // <-- ADD THIS LINE
+  template: `<product-widget></product-widget>`
+})
+export class YourPageComponent { }
 ```
 
 ---
 
-## Step 4: Verify Integration
+### Change 3: Add Widget Tag to Template
 
-1. Start your main application's dev server
-2. Navigate to the page where you added `<product-widget>`
-3. You should see:
-   - A left sidebar with user info, device info, and stats
-   - A product grid with 16 tech accessories
-   - Pagination controls (8 products per page)
-   - All product images loading correctly
+Add this tag wherever you want the widget to appear:
+
+```html
+<product-widget></product-widget>
+```
+
+The widget will fill the container it's placed in.
+
+---
+
+## Complete Integration Summary
+
+| Step | File | Change |
+|------|------|--------|
+| 1 | `src/index.html` | Add `<script src="assets/widgets/product-widget.js" defer></script>` |
+| 2 | `src/app/app.module.ts` | Add `CUSTOM_ELEMENTS_SCHEMA` to schemas array |
+| 3 | Your component template | Add `<product-widget></product-widget>` |
+
+**That's it. Only 3 lines changed in your application.**
+
+---
+
+## Verification
+
+After integration, verify these work:
+
+1. ✅ Products display in a 4-column grid
+2. ✅ Each tile shows image on left, content on right
+3. ✅ "Delivers in: X DAYS" visible at bottom of tiles
+4. ✅ Clicking a tile navigates to order form page
+5. ✅ Order form shows 3 dropdowns (Machine, Version, Approver)
+6. ✅ "Back to Products" button returns to grid
+7. ✅ No console errors
 
 ---
 
 ## Troubleshooting
 
-### Images Not Loading
-**Issue**: Product images show broken image icons.
-**Fix**: Ensure the `assets/products/` folder is copied to the correct location and accessible via the same base URL as the widget script.
+### Widget not appearing
+- Check browser console for errors
+- Verify script is loaded in Network tab
+- Ensure the script path matches: `assets/widgets/product-widget.js`
 
-### Widget Not Appearing
-**Issue**: The `<product-widget>` tag shows nothing.
-**Fix**: 
-1. Check browser console for errors
-2. Verify the script is loaded (Network tab)
-3. Ensure `defer` attribute is on the script tag
+### Error: "'product-widget' is not a known element"
+- Add `CUSTOM_ELEMENTS_SCHEMA` to your module or component
+- Import it from `@angular/core`
 
-### Styles Look Wrong
-**Issue**: Widget appears but looks broken.
-**Fix**: The widget uses Shadow DOM for style isolation. If styles are still affected, check for global CSS resets that might interfere.
+### Zone.js conflict or duplicate zone error
+- This should not happen. The widget excludes zone.js.
+- If it occurs, ensure you built with `npm run build:elements`
+
+### NullInjectorError on page navigation
+- This is fixed in current build
+- Widget stores Angular instance globally and reuses it
+
+### Images not loading / broken images
+- Verify `src/assets/widgets/assets/products/` folder exists
+- Check that PNG files were copied correctly
 
 ---
 
-## Widget Configuration (Optional)
+## Updating the Widget
 
-The widget accepts these attributes:
+When the widget source code is updated:
 
-```html
-<product-widget 
-  items-per-page="8"
-  api-base-url="https://api.example.com">
-</product-widget>
+```bash
+# 1. Navigate to WebPlugin
+cd /path/to/WebPlugin
+
+# 2. Rebuild
+npm run build:elements
+
+# 3. Copy updated files to host app
+cp dist/product-widget/product-widget.js /path/to/your-app/src/assets/widgets/
+cp -r dist/product-widget/assets /path/to/your-app/src/assets/widgets/
+
+# 4. Refresh browser (no rebuild of host app needed)
 ```
 
-| Attribute | Default | Description |
-|-----------|---------|-------------|
-| `items-per-page` | `8` | Number of products per page |
-| `api-base-url` | `""` | API URL (uses mock data if empty) |
+---
+
+## Development (Running Widget Standalone)
+
+To run the widget by itself for testing:
+
+```bash
+cd /path/to/WebPlugin
+npm start
+```
+
+Open http://localhost:4200 to see the widget.
 
 ---
 
-## Mock Data
+## Widget Source Structure
 
-The widget uses **built-in mock data** by default:
-- 16 tech products with images
-- No backend API required
-- Perfect for demos and prototyping
-
-Mock data is defined in `src/app/services/product.service.ts`.
+```
+WebPlugin/
+├── src/app/components/
+│   ├── product-widget/     # Main container component
+│   ├── product-grid/       # Grid layout 
+│   ├── product-tile/       # Individual tile (horizontal layout)
+│   ├── order-form/         # Order form page with 3 dropdowns
+│   └── pagination/         # Pagination with items per page
+├── src/app/services/
+│   └── product.service.ts  # Mock data (replace with API later)
+├── src/app/models/
+│   └── product.model.ts    # Product interface
+├── build-elements.js       # Build script
+└── angular.json            # Angular config with 'elements' build
+```
 
 ---
 
-## File Summary
+## Commands Reference
 
-| File | Purpose |
-|------|---------|
-| `product-widget.js` | Main widget bundle (includes all components) |
-| `assets/products/*.png` | 16 AI-generated product images |
-| `src/app/components/sidebar/` | Left sidebar with user/device info |
-| `src/app/components/product-grid/` | Product tile grid |
-| `src/app/services/product.service.ts` | Mock product data |
+| Command | Purpose |
+|---------|---------|
+| `npm install` | Install dependencies (first time only) |
+| `npm run build:elements` | Build widget for integration |
+| `npm start` | Run widget standalone for development |
+
+---
+
+## Output Files Reference
+
+| File | Size | Description |
+|------|------|-------------|
+| `product-widget.js` | ~150KB | Main bundle (no zone.js included) |
+| `assets/products/*.png` | ~2MB total | 16 product images |
+
+---
+
+## End of Document
+
+Follow the steps above exactly and the widget will integrate successfully.

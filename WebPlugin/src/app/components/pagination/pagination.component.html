@@ -1,0 +1,32 @@
+<div class="pagination">
+    <button class="page-btn prev-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 18l-6-6 6-6" />
+        </svg>
+        Previous
+    </button>
+
+    <div class="page-numbers">
+        <button *ngFor="let page of pages" class="page-number" [class.active]="page === currentPage"
+            (click)="goToPage(page)">
+            {{ page }}
+        </button>
+    </div>
+
+    <button class="page-btn next-btn" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+        Next
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 18l6-6-6-6" />
+        </svg>
+    </button>
+
+    <div class="items-per-page">
+        <span class="items-label">Items per page</span>
+        <select class="items-select" [value]="itemsPerPage" (change)="onItemsPerPageChange($event)">
+            <option [value]="8">8</option>
+            <option [value]="12">12</option>
+            <option [value]="16">16</option>
+            <option [value]="24">24</option>
+        </select>
+    </div>
+</div>

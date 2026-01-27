@@ -1,0 +1,29 @@
+<div class="product-widget">
+    <!-- Products View -->
+    <div class="view-container" *ngIf="currentView === 'products'">
+        <div class="widget-content" *ngIf="!loading; else loadingTemplate">
+            <app-product-grid [products]="currentProducts" (productSelect)="onProductSelect($event)">
+            </app-product-grid>
+
+            <div class="pagination-container">
+                <div class="items-info">{{ getItemsInfo() }}</div>
+                <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [itemsPerPage]="itemsPerPage"
+                    (pageChange)="onPageChange($event)" (itemsPerPageChange)="onItemsPerPageChange($event)">
+                </app-pagination>
+            </div>
+        </div>
+
+        <ng-template #loadingTemplate>
+            <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <p>Loading products...</p>
+            </div>
+        </ng-template>
+    </div>
+
+    <!-- Order Form View -->
+    <div class="view-container" *ngIf="currentView === 'order'">
+        <app-order-form [product]="selectedProduct" (close)="goBackToProducts()" (submit)="onOrderSubmit($event)">
+        </app-order-form>
+    </div>
+</div>

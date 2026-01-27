@@ -1,0 +1,118 @@
+<div class="order-page">
+    <!-- Breadcrumb / Back Navigation -->
+    <div class="page-header">
+        <button class="back-btn" (click)="onBack()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+            Back to Products
+        </button>
+        <div class="breadcrumb">
+            <span class="breadcrumb-item" (click)="onBack()">Products</span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-item active">Request Product</span>
+        </div>
+    </div>
+
+    <!-- Page Content -->
+    <div class="page-content">
+        <div class="content-wrapper">
+            <!-- Product Summary Card -->
+            <div class="product-card" *ngIf="product">
+                <div class="product-image-container">
+                    <img [src]="product.image" [alt]="product.name" class="product-image" />
+                </div>
+                <div class="product-details">
+                    <h1 class="product-name">{{ product.name }}</h1>
+                    <p class="product-description">{{ product.description }}</p>
+                    <div class="product-meta">
+                        <span class="delivery-badge">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12 6 12 12 16 14" />
+                            </svg>
+                            Delivers in {{ product.deliveryDays }} days
+                        </span>
+                        <span class="category-badge">{{ product.category }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Form -->
+            <div class="form-card">
+                <h2 class="form-title">Request Details</h2>
+                <p class="form-subtitle">Please fill in the following information to submit your request.</p>
+
+                <form class="order-form" (ngSubmit)="onSubmit()">
+                    <div class="form-group">
+                        <label for="machine" class="form-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                                <line x1="8" y1="21" x2="16" y2="21" />
+                                <line x1="12" y1="17" x2="12" y2="21" />
+                            </svg>
+                            Machine Selection <span class="required">*</span>
+                        </label>
+                        <select id="machine" [(ngModel)]="formData.machine" name="machine" class="form-select" required>
+                            <option value="">-- Select Machine --</option>
+                            <option *ngFor="let machine of machines" [value]="machine.value">
+                                {{ machine.label }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="version" class="form-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                                <path d="M2 17l10 5 10-5" />
+                                <path d="M2 12l10 5 10-5" />
+                            </svg>
+                            Version Selection <span class="required">*</span>
+                        </label>
+                        <select id="version" [(ngModel)]="formData.version" name="version" class="form-select" required>
+                            <option value="">-- Select Version --</option>
+                            <option *ngFor="let version of versions" [value]="version.value">
+                                {{ version.label }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="approver" class="form-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                            Approver Selection <span class="required">*</span>
+                        </label>
+                        <select id="approver" [(ngModel)]="formData.approver" name="approver" class="form-select"
+                            required>
+                            <option value="">-- Select Approver --</option>
+                            <option *ngFor="let approver of approvers" [value]="approver.value">
+                                {{ approver.label }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" (click)="onBack()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18" />
+                                <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary" [disabled]="!isFormValid()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                <polyline points="22 4 12 14.01 9 11.01" />
+                            </svg>
+                            Submit Request
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

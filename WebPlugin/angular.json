@@ -81,6 +81,25 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "elements": {
+              "optimization": true,
+              "extractLicenses": true,
+              "sourceMap": false,
+              "polyfills": [],
+              "outputHashing": "none",
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "1MB",
+                  "maximumError": "2MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "10kB",
+                  "maximumError": "20kB"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"

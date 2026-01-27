@@ -1,47 +1,20 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Product } from '../../models/product.model';
 import { ProductTileComponent } from '../product-tile/product-tile.component';
 
 @Component({
-    selector: 'app-product-grid',
-    standalone: true,
-    imports: [CommonModule, ProductTileComponent],
-    template: `
-    <div class="product-grid">
-      <app-product-tile 
-        *ngFor="let product of products" 
-        [product]="product">
-      </app-product-tile>
-    </div>
-  `,
-    styles: [`
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 24px;
-      padding: 0;
-    }
-    
-    @media (max-width: 1200px) {
-      .product-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-    
-    @media (max-width: 900px) {
-      .product-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-    
-    @media (max-width: 600px) {
-      .product-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  `]
+  selector: 'app-product-grid',
+  standalone: true,
+  imports: [CommonModule, ProductTileComponent],
+  templateUrl: './product-grid.component.html',
+  styleUrl: './product-grid.component.css'
 })
 export class ProductGridComponent {
-    @Input() products: Product[] = [];
+  @Input() products: Product[] = [];
+  @Output() productSelect = new EventEmitter<Product>();
+
+  onProductSelect(product: Product): void {
+    this.productSelect.emit(product);
+  }
 }

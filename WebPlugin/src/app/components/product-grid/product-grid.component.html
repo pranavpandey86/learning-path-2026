@@ -1,0 +1,4 @@
+<div class="product-grid">
+    <app-product-tile *ngFor="let product of products" [product]="product" (select)="onProductSelect($event)">
+    </app-product-tile>
+</div>

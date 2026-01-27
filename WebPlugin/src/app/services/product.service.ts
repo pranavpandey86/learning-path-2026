@@ -10,131 +10,147 @@ export class ProductService {
     private readonly products: Product[] = [
         {
             id: 1,
-            name: 'Wireless Headphones',
-            description: 'Premium noise-canceling wireless headphones with 30-hour battery life and exceptional sound quality.',
-            price: 299.99,
+            name: 'Remote Office Travel ID - S0011 - Create / Modify',
+            description: 'The Remote Office Travel ID product is an temporary solution for Citi employees traveling to remote locations.',
+            price: 0,
             image: 'assets/products/headphones_1769364775116.png',
-            category: 'Audio'
+            category: 'Identity',
+            deliveryDays: 0
         },
         {
             id: 2,
-            name: 'Gaming Laptop',
-            description: 'High-performance gaming laptop with RTX 4070, 16GB RAM, and 1TB NVMe SSD.',
-            price: 1599.99,
+            name: 'BYOD Mobile Token',
+            description: 'Mobile Token 2.0 for BYOD is an alternative to a Safeword card. One time passcodes are generated directly from your device.',
+            price: 0,
             image: 'assets/products/laptop_1769364788924.png',
-            category: 'Computers'
+            category: 'Computers',
+            deliveryDays: 2
         },
         {
             id: 3,
-            name: 'Ergonomic Mouse',
-            description: 'Wireless ergonomic mouse designed for comfort during long work sessions.',
-            price: 79.99,
+            name: 'Bring Your Own Device (BYOD) Applications',
+            description: 'Over 80% of mobile users prefer to use their personal devices. This product allows you to access corporate apps securely.',
+            price: 0,
             image: 'assets/products/mouse_1769364802377.png',
-            category: 'Peripherals'
+            category: 'Peripherals',
+            deliveryDays: 2
         },
         {
             id: 4,
-            name: 'Mechanical Keyboard',
-            description: 'RGB mechanical keyboard with Cherry MX switches and programmable keys.',
-            price: 149.99,
+            name: 'Zoom@Citi Account Request',
+            description: 'Zoom is Citi\'s strategic solution for meetings, providing an intuitive, video-first solution for collaboration.',
+            price: 0,
             image: 'assets/products/keyboard_1769364815812.png',
-            category: 'Peripherals'
+            category: 'Peripherals',
+            deliveryDays: 1
         },
         {
             id: 5,
-            name: '4K UltraWide Monitor',
-            description: '34-inch curved 4K monitor with HDR support and 144Hz refresh rate.',
-            price: 699.99,
+            name: 'Desktop Software Request',
+            description: 'How to complete a request for Desktop Software Request - video is located on the Support Tab for your reference.',
+            price: 0,
             image: 'assets/products/monitor_1769364837212.png',
-            category: 'Displays'
+            category: 'Displays',
+            deliveryDays: 11
         },
         {
             id: 6,
-            name: 'HD Webcam',
-            description: '1080p webcam with auto-focus, built-in microphone, and low-light correction.',
-            price: 89.99,
+            name: 'AD Management - Group Membership/Automated Shared Directory Access (ASDA)',
+            description: 'Add or remove Application / DB / Shared Directory access for users in your organization.',
+            price: 0,
             image: 'assets/products/webcam_1769364851070.png',
-            category: 'Video'
+            category: 'Video',
+            deliveryDays: 18
         },
         {
             id: 7,
-            name: 'Desktop Speakers',
-            description: 'Powerful 2.1 speaker system with subwoofer and Bluetooth connectivity.',
-            price: 179.99,
+            name: 'MS Office Macro Enable/Disable',
+            description: 'This product allows users to submit request to enable/disable use of Macros in Microsoft Office applications.',
+            price: 0,
             image: 'assets/products/speakers_1769364863428.png',
-            category: 'Audio'
+            category: 'Audio',
+            deliveryDays: 1
         },
         {
             id: 8,
-            name: 'Game Controller',
-            description: 'Wireless game controller compatible with PC, Xbox, and mobile devices.',
-            price: 69.99,
+            name: 'BYOD Quick Reactivation',
+            description: 'This product will allow you to request a QR Code to activate BlackBerry UEM Client on any supported device.',
+            price: 0,
             image: 'assets/products/controller_1769364878161.png',
-            category: 'Gaming'
+            category: 'Gaming',
+            deliveryDays: 1
         },
         {
             id: 9,
-            name: 'USB-C Hub',
-            description: '10-in-1 USB-C hub with HDMI, SD card reader, and 100W power delivery.',
-            price: 59.99,
+            name: 'VPN Access Request',
+            description: 'Request VPN access for secure remote connectivity to corporate network resources.',
+            price: 0,
             image: 'assets/products/usb_hub_1769364906354.png',
-            category: 'Accessories'
+            category: 'Accessories',
+            deliveryDays: 3
         },
         {
             id: 10,
-            name: 'External SSD',
-            description: '2TB portable SSD with USB 3.2 Gen 2 for ultra-fast file transfers.',
-            price: 199.99,
+            name: 'Cloud Storage Quota Increase',
+            description: 'Request additional storage quota for OneDrive or SharePoint cloud storage services.',
+            price: 0,
             image: 'assets/products/ssd_1769364921148.png',
-            category: 'Storage'
+            category: 'Storage',
+            deliveryDays: 2
         },
         {
             id: 11,
-            name: 'Laptop Stand',
-            description: 'Adjustable aluminum laptop stand with improved airflow and ergonomic angles.',
-            price: 49.99,
+            name: 'Developer Tools Package',
+            description: 'Request development environment setup including IDE, version control, and build tools.',
+            price: 0,
             image: 'assets/products/laptop_stand_1769364935317.png',
-            category: 'Accessories'
+            category: 'Development',
+            deliveryDays: 5
         },
         {
             id: 12,
-            name: 'LED Desk Lamp',
-            description: 'Smart LED desk lamp with adjustable color temperature and brightness.',
-            price: 59.99,
+            name: 'Security Token Replacement',
+            description: 'Request replacement of physical security token for two-factor authentication.',
+            price: 0,
             image: 'assets/products/desk_lamp_1769364948202.png',
-            category: 'Accessories'
+            category: 'Security',
+            deliveryDays: 7
         },
         {
             id: 13,
-            name: 'Wireless Charger',
-            description: '15W fast wireless charging pad compatible with all Qi-enabled devices.',
-            price: 39.99,
+            name: 'Email Distribution List Creation',
+            description: 'Request creation of new email distribution list for team or project communication.',
+            price: 0,
             image: 'assets/products/wireless_charger_1769364971231.png',
-            category: 'Power'
+            category: 'Communication',
+            deliveryDays: 1
         },
         {
             id: 14,
-            name: 'Noise-Canceling Earbuds',
-            description: 'True wireless earbuds with active noise cancellation and 8-hour battery.',
-            price: 199.99,
+            name: 'Conference Room Equipment',
+            description: 'Request audio/video equipment setup for conference rooms and meeting spaces.',
+            price: 0,
             image: 'assets/products/earbuds_1769364984254.png',
-            category: 'Audio'
+            category: 'Audio',
+            deliveryDays: 14
         },
         {
             id: 15,
-            name: 'Drawing Tablet',
-            description: 'Professional drawing tablet with 8192 pressure levels and tilt support.',
-            price: 249.99,
+            name: 'Database Access Request',
+            description: 'Request read/write access to production or development database environments.',
+            price: 0,
             image: 'assets/products/drawing_tablet_1769364998734.png',
-            category: 'Creative'
+            category: 'Data',
+            deliveryDays: 5
         },
         {
             id: 16,
-            name: 'Streaming Microphone',
-            description: 'USB condenser microphone with cardioid pattern and real-time monitoring.',
-            price: 129.99,
+            name: 'API Gateway Access',
+            description: 'Request API key and access credentials for internal API gateway services.',
+            price: 0,
             image: 'assets/products/microphone_1769365011208.png',
-            category: 'Audio'
+            category: 'Integration',
+            deliveryDays: 3
         }
     ];
 

@@ -1,7 +1,7 @@
 import { createCustomElement } from '@angular/elements';
 import { createApplication } from '@angular/platform-browser';
 import { bootstrapApplication } from '@angular/platform-browser';
-import { ApplicationRef } from '@angular/core';
+import { ApplicationRef, NgZone } from '@angular/core';
 import { appConfig } from './app/app.config';
 import { ProductWidgetComponent } from './app/components/product-widget/product-widget.component';
 import { AppComponent } from './app/app.component';
@@ -11,19 +11,27 @@ declare global {
   interface Window {
     __PRODUCT_WIDGET_APP__: ApplicationRef | null;
     __PRODUCT_WIDGET_PRODUCTION__: boolean;
+    __PRODUCT_WIDGET_REGISTERED__: boolean;
+    Zone?: any;
   }
 }
 
 // Check if we're in production mode (set by the build script)
 const isProduction = window.__PRODUCT_WIDGET_PRODUCTION__ === true;
 
+// Check if Zone.js is already loaded (indicates another Angular app is running)
+const isZoneAlreadyLoaded = typeof window.Zone !== 'undefined';
+
 // Function to safely create the custom element
 async function registerProductWidget(): Promise<void> {
   // Check if already registered
-  if (customElements.get('product-widget')) {
+  if (customElements.get('product-widget') || window.__PRODUCT_WIDGET_REGISTERED__) {
     console.log('[ProductWidget] Custom element already registered, skipping...');
     return;
   }
+
+  // Mark as being registered to prevent race conditions
+  window.__PRODUCT_WIDGET_REGISTERED__ = true;
 
   // Check if we already have an application instance
   if (window.__PRODUCT_WIDGET_APP__) {
@@ -43,7 +51,19 @@ async function registerProductWidget(): Promise<void> {
 
   try {
     console.log('[ProductWidget] Creating new application instance...');
-    const app = await createApplication(appConfig);
+
+    // When integrating with an existing Angular app, use 'noop' zone to avoid conflicts
+    const widgetConfig = {
+      ...appConfig,
+      providers: [
+        ...appConfig.providers,
+        // Use 'noop' zone when Zone.js is already loaded by host app
+        // This prevents the NG0908 error
+        ...(isZoneAlreadyLoaded ? [{ provide: NgZone, useValue: new NgZone({ enableLongStackTrace: false }) }] : [])
+      ]
+    };
+
+    const app = await createApplication(widgetConfig);
 
     // Store the application reference globally
     window.__PRODUCT_WIDGET_APP__ = app;
@@ -56,6 +76,7 @@ async function registerProductWidget(): Promise<void> {
     console.log('[ProductWidget] Custom element registered successfully');
   } catch (err) {
     console.error('[ProductWidget] Failed to register custom element:', err);
+    window.__PRODUCT_WIDGET_REGISTERED__ = false;
   }
 }
 
